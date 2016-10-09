@@ -39,13 +39,19 @@ STAGINGDOMAIN=$NEWHASH.$EXTRACTEDDOMAIN
 STAGINGPATH="$SITEPATH/$STAGINGDOMAIN"
 STAGINGVHOST="$NGINXSITEPATH/$STAGINGDOMAIN"
 
+#multisitetest
+MULSTISITETEST=(grep "MULTISITE" $EXTRACTEDPATH/wp-config.php)
+
+if [ ! -z "$MULTISITETEST" ]; then
+    echo "multisite not supported"
+    exit
+fi
+
 ###
 # nginx stuff
 ###
 
 ##new nginx virtual host
-
-#copy sites-available and add newhash
 
 cp $NGINXSITEPATH/$VHOST $STAGINGVHOST
 ln -s $STAGINGVHOST $NGINXSITESENABLED/$STAGINGDOMAIN
