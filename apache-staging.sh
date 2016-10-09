@@ -11,10 +11,21 @@ SITELIST=($(ls -lh $APACHESITEPATH | awk '{print $9}'))
 #generate hash based on date and use first 8 characters for subdomain
 NEWHASH=$(date | sha1sum | awk '{ print substr($0,0,8)}')
 
-#hardcode or read
-#echo "What is the name of your virtual host?"
-#echo "virtual hosts found ${SITELIST[@]} "
-VHOST="wordpress"
+#capture first parameter
+VHOST="$1"
+
+#if no parameter passed prompt user
+if [ -z "$VHOST" ]; then
+    echo "What is the name of your virtual host?"
+    echo "Virtual hosts found:\n ${SITELIST[@]} "
+    read VHOST
+fi
+
+#check if vhost exists
+if [ ! -f $APACHEPATH/$VHOST ]; then
+    echo "$VHOST not found"
+    exit
+fi
 
 ORIGINALVHOST=$APACHESITEPATH/$VHOST
 EXTRACTEDPATH=$(grep DocumentRoot $APACHESITEPATH/$VHOST | grep -v "#" | awk '{ print $2 }')
