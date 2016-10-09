@@ -38,16 +38,8 @@ STAGINGDOMAIN=$NEWHASH.$EXTRACTEDDOMAIN
 STAGINGPATH="$SITEPATH/$STAGINGDOMAIN"
 STAGINGVHOST="$APACHESITEPATH/$STAGINGDOMAIN.conf"
 
-###
-# nginx stuff
-###
-
-##new nginx virtual host
-
 #copy Apache virtual host
-
 cp $APACHESITEPATH/$VHOST $STAGINGVHOST
-
 
 #replace old server_name with new server_name
 sed -i "/ServerName /c\ServerName $STAGINGDOMAIN" $STAGINGVHOST
