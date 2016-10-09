@@ -39,7 +39,7 @@ STAGINGPATH="$SITEPATH/$STAGINGDOMAIN"
 STAGINGVHOST="$APACHESITEPATH/$STAGINGDOMAIN.conf"
 
 #multisitetest
-MULSTISITETEST=(grep "MULTISITE" /var/www/wp-bullet/wp-config.php)
+MULSTISITETEST=(grep "MULTISITE" $EXTRACTEDPATH/wp-config.php)
 
 if [ ! -z "$MULTISITETEST" ]; then
     echo "multisite not supported"
