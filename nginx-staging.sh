@@ -17,7 +17,7 @@ NEWHASH=$(date | sha1sum | awk '{ print substr($0,0,8)}')
 VHOST="wordpress"
 
 ORIGINALVHOST=$NGINXSITEPATH/$VHOST
-EXTRACTEDPATH=$(grep -E "root.*var.*" $NGINXSITEPATH/$VHOST | awk '{print $2}' | tr -d ";")
+EXTRACTEDPATH=$(grep "root " $NGINXSITEPATH/$VHOST | awk '{print $2}' | tr -d ";")
 # server_name without www
 EXTRACTEDDOMAIN=$(grep server_name $NGINXSITEPATH/$VHOST | awk '{ gsub("www\.", ""); print $2 }' | tr -d ";")
 #extract siteurl
