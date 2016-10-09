@@ -91,7 +91,7 @@ find $STAGINGPATH -type d -exec chmod 755 {} +
 sudo -u www-data wp db import /tmp/$STAGINGDOMAIN.sql --path=$STAGINGPATH --skip-themes --skip-plugins
 #sudo -u www-data wp db import /tmp/$STAGINGDOMAIN-url.sql --path=$STAGINGPATH --skip-themes --skip-plugins
 sudo -u www-data wp search-replace $EXTRACTEDPATH $STAGINGPATH --path=$STAGINGPATH --skip-themes --skip-plugins
-#turn off indexing of search engins
+#turn off indexing of search engines
 sudo -u www-data wp option update blog_public 0 --path=$STAGINGPATH --skip-themes --skip-plugins
 
 sudo rm /tmp/$STAGINGDOMAIN.sql
