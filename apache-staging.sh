@@ -20,6 +20,7 @@ ORIGINALVHOST=$APACHESITEPATH/$VHOST
 EXTRACTEDPATH=$(grep DocumentRoot $APACHESITEPATH/$VHOST | grep -v "#" | awk '{ print $2 }')
 # server_name without www
 EXTRACTEDDOMAIN=$(grep ServerName $APACHESITEPATH/$VHOST | grep -v "#" | awk '{ gsub("www\.", ""); print $2 }')
+SITEURL=$(wp option get siteurl --path=$EXTRACTEDPATH --skip-plugins --skip-themes --allow-root | awk -F ["\/"] '{ print $3 }')
 
 #make unique staging name for DNS and new path
 STAGINGDOMAIN=$NEWHASH.$EXTRACTEDDOMAIN
@@ -64,7 +65,7 @@ NEWDBUSER=$OLDDBUSER$NEWHASH
 NEWDBPASS=$OLDDBPASS$NEWHASH
 
 #export original db and search replace 
-sudo -u www-data wp search-replace $EXTRACTEDDOMAIN $STAGINGDOMAIN --export=/tmp/$STAGINGDOMAIN.sql --path=$EXTRACTEDPATH --skip-themes --skip-plugins
+sudo -u www-data wp search-replace $SITEURL $STAGINGDOMAIN --export=/tmp/$STAGINGDOMAIN.sql --path=$EXTRACTEDPATH --skip-themes --skip-plugins
 #sudo -u www-data wp search-replace $EXTRACTEDDOMAIN $STAGINGDOMAIN '*_options' --export=/tmp/$STAGINGDOMAIN-url.sql --path=$EXTRACTEDPATH --skip-themes --skip-plugins
 
 #create new db user, pass
