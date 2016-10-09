@@ -38,6 +38,15 @@ STAGINGDOMAIN=$NEWHASH.$EXTRACTEDDOMAIN
 STAGINGPATH="$SITEPATH/$STAGINGDOMAIN"
 STAGINGVHOST="$APACHESITEPATH/$STAGINGDOMAIN.conf"
 
+#multisitetest
+MULSTISITETEST=(grep "MULTISITE" /var/www/wp-bullet/wp-config.php)
+
+if [ ! -z "$MULTISITETEST" ]; then
+    echo "multisite not supported"
+    exit
+fi
+
+
 #copy Apache virtual host
 cp $APACHESITEPATH/$VHOST $STAGINGVHOST
 
