@@ -1,6 +1,6 @@
 <a href="https://guides.wp-bullet.com"><img src="https://guides.wp-bullet.com/wp-content/uploads/2016/07/wp-bullet-logo.svg" height="50"></a>
 
-# WP Autostaging Scripts
+# [WP Bullet](https://wp-bullet.com) Autostaging Scripts
 
 These scripts are for easily creating WordPress or WooCommerce staging servers running nginx or Apache.
 
