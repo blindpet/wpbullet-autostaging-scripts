@@ -4,6 +4,8 @@
 # Adapted
 # Author: Mike
 MYSQLROOTPASS=
+#user to run WP CLI as
+WPCLIUSER="www-data"
 NGINXSITEPATH=/etc/nginx/sites-available
 NGINXSITESENABLED=/etc/nginx/sites-enabled
 SITEPATH=/var/www
@@ -83,7 +85,7 @@ NEWDBUSER=$OLDDBUSER$NEWHASH
 NEWDBPASS=$OLDDBPASS$NEWHASH
 
 #export original db and search replace 
-sudo -u www-data wp search-replace $SITEURL $STAGINGDOMAIN --export=/tmp/$STAGINGDOMAIN.sql --path=$EXTRACTEDPATH --skip-themes --skip-plugins
+sudo -u $WPCLIUSER wp search-replace $SITEURL $STAGINGDOMAIN --export=/tmp/$STAGINGDOMAIN.sql --path=$EXTRACTEDPATH --skip-themes --skip-plugins
 #sudo -u www-data wp search-replace $EXTRACTEDDOMAIN $STAGINGDOMAIN '*_options' --export=/tmp/$STAGINGDOMAIN-url.sql --path=$EXTRACTEDPATH --skip-themes --skip-plugins
 
 #create new db user, pass
@@ -106,16 +108,14 @@ find $STAGINGPATH -type d -exec chmod 755 {} +
 
 #import new db
 
-sudo -u www-data wp db import /tmp/$STAGINGDOMAIN.sql --path=$STAGINGPATH --skip-themes --skip-plugins
+sudo -u $WPCLIUSER wp db import /tmp/$STAGINGDOMAIN.sql --path=$STAGINGPATH --skip-themes --skip-plugins
 #sudo -u www-data wp db import /tmp/$STAGINGDOMAIN-url.sql --path=$STAGINGPATH --skip-themes --skip-plugins
-sudo -u www-data wp search-replace $EXTRACTEDPATH $STAGINGPATH --path=$STAGINGPATH --skip-themes --skip-plugins
+sudo -u $WPCLIUSER wp search-replace $EXTRACTEDPATH $STAGINGPATH --path=$STAGINGPATH --skip-themes --skip-plugins
 #turn off indexing of search engines
-sudo -u www-data wp option update blog_public 0 --path=$STAGINGPATH --skip-themes --skip-plugins
-
+sudo -u $WPCLIUSER wp option update blog_public 0 --path=$STAGINGPATH --skip-themes --skip-plugins
 
 #remove dump
 sudo rm /tmp/$STAGINGDOMAIN.sql
-
 
 #reload nginx
 service nginx reload
