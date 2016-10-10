@@ -4,6 +4,8 @@
 # Adapted
 # Author: Mike
 MYSQLROOTPASS=
+#user to run wp cli as
+WPCLIUSER="www-data"
 APACHESITEPATH=/etc/apache2/sites-available
 #where WordPress paths are
 SITEPATH=/var/www
@@ -46,19 +48,13 @@ if [ ! -z "$MULTISITETEST" ]; then
     exit
 fi
 
-
 #copy Apache virtual host
 cp $APACHESITEPATH/$VHOST $STAGINGVHOST
 
 #replace old server_name with new server_name
 sed -i "/ServerName /c\ServerName $STAGINGDOMAIN" $STAGINGVHOST
 
-#replace access and log names use full line replacement
-#sed -i "/access_log/c\access_log   /var/log/nginx/$STAGINGDOMAIN.access.log;" $STAGINGVHOST
-#sed -i "/error_log/c\access_log   /var/log/nginx/$STAGINGDOMAIN.error.log;" $STAGINGVHOST
-
 #root folder replacement
-# sed -i '/^root/c\root herp;' /etc/nginx/sites-enabled/63f1a28.wp-bullet.online
 sed -i "/DocumentRoot /c\DocumentRoot $STAGINGPATH" $STAGINGVHOST
 
 #copy over wordpress folder
@@ -77,7 +73,7 @@ NEWDBUSER=$OLDDBUSER$NEWHASH
 NEWDBPASS=$OLDDBPASS$NEWHASH
 
 #export original db and search replace 
-sudo -u www-data wp search-replace $SITEURL $STAGINGDOMAIN --export=/tmp/$STAGINGDOMAIN.sql --path=$EXTRACTEDPATH --skip-themes --skip-plugins
+sudo -u $WPCLIUSER wp search-replace $SITEURL $STAGINGDOMAIN --export=/tmp/$STAGINGDOMAIN.sql --path=$EXTRACTEDPATH --skip-themes --skip-plugins
 #sudo -u www-data wp search-replace $EXTRACTEDDOMAIN $STAGINGDOMAIN '*_options' --export=/tmp/$STAGINGDOMAIN-url.sql --path=$EXTRACTEDPATH --skip-themes --skip-plugins
 
 #create new db user, pass
@@ -100,11 +96,11 @@ find $STAGINGPATH -type d -exec chmod 755 {} +
 
 #import new db
 
-sudo -u www-data wp db import /tmp/$STAGINGDOMAIN.sql --path=$STAGINGPATH --skip-themes --skip-plugins
+sudo -u $WPCLIUSER wp db import /tmp/$STAGINGDOMAIN.sql --path=$STAGINGPATH --skip-themes --skip-plugins
 #sudo -u www-data wp db import /tmp/$STAGINGDOMAIN-url.sql --path=$STAGINGPATH --skip-themes --skip-plugins
-sudo -u www-data wp search-replace $EXTRACTEDPATH $STAGINGPATH --path=$STAGINGPATH --skip-themes --skip-plugins
+sudo -u $WPCLIUSER wp search-replace $EXTRACTEDPATH $STAGINGPATH --path=$STAGINGPATH --skip-themes --skip-plugins
 #turn off indexing of search engines
-sudo -u www-data wp option update blog_public 0 --path=$STAGINGPATH --skip-themes --skip-plugins
+sudo -u $WPCLIUSER wp option update blog_public 0 --path=$STAGINGPATH --skip-themes --skip-plugins
 
 sudo rm /tmp/$STAGINGDOMAIN.sql
 
