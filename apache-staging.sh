@@ -15,21 +15,29 @@ if [ ! hash wp 2>/dev/null]; then
     sudo wget -q https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/bin/wp
     sudo chmod 755 /usr/bin/wp
 fi
+
 #define mysql root password
 MYSQLROOTPASS=
+
 #user to run wp cli as
 WPCLIUSER="www-data"
+
+#define path to Apache virtual hosts
 APACHESITEPATH=/etc/apache2/sites-available
-#where WordPress paths are
+
+#where WordPress sites are
 SITEPATH=/var/www
+
+#generate array of sites to display to user
 SITELIST=($(ls -lh $APACHESITEPATH | awk '{print $9}'))
+
 #generate hash based on date and use first 8 characters for subdomain
 NEWHASH=$(date | sha1sum | awk '{ print substr($0,0,8)}')
 
-#capture first parameter
+#capture first parameter which is the vhost file
 VHOST="$1"
 
-#if no parameter passed prompt user
+#if no parameter passed prompt user for vhost
 if [ -z "$VHOST" ]; then
     echo "What is the name of your virtual host?"
     echo "Virtual hosts found:\n ${SITELIST[@]} "
@@ -42,10 +50,14 @@ if [ ! -f $APACHEPATH/$VHOST ]; then
     exit
 fi
 
+#define the vhost
 ORIGINALVHOST=$APACHESITEPATH/$VHOST
-EXTRACTEDPATH=$(grep DocumentRoot $APACHESITEPATH/$VHOST | grep -v "#" | awk '{ print $2 }')
+
+#get path of WordPress install
+EXTRACTEDPATH=$(grep DocumentRoot $ORIGINALVHOST | grep -v "#" | awk '{ print $2 }')
+
 # server_name without www
-EXTRACTEDDOMAIN=$(grep ServerName $APACHESITEPATH/$VHOST | grep -v "#" | awk '{ gsub("www\.", ""); print $2 }')
+EXTRACTEDDOMAIN=$(grep ServerName $ORIGINALVHOST | grep -v "#" | awk '{ gsub("www\.", ""); print $2 }')
 SITEURL=$(wp option get siteurl --path=$EXTRACTEDPATH --skip-plugins --skip-themes --allow-root | awk -F ["\/"] '{ print $3 }')
 
 #make unique staging name for DNS and new path
@@ -62,7 +74,7 @@ if [ ! -z "$MULTISITETEST" ]; then
 fi
 
 #copy Apache virtual host
-cp $APACHESITEPATH/$VHOST $STAGINGVHOST
+cp $ORIGINALVHOST $STAGINGVHOST
 
 #replace old server_name with new server_name
 sed -i "/ServerName /c\ServerName $STAGINGDOMAIN" $STAGINGVHOST
@@ -103,14 +115,14 @@ sed -i "/define('DB_PASSWORD', /c\define('DB_PASSWORD', '${NEWDBPASS}');" ${STAG
 
 #permissions fix
 
-chown -R $WPCLIUSER:$WPCLIUSER $STAGINGPATH/
+chown -R $WPCLIUSER:$WPCLIUSER $STAGINGPATH
 find $STAGINGPATH -type f -exec chmod 644 {} +
 find $STAGINGPATH -type d -exec chmod 755 {} +
 
 #import new db
 
 sudo -u $WPCLIUSER wp db import /tmp/$STAGINGDOMAIN.sql --path=$STAGINGPATH --skip-themes --skip-plugins
-#sudo -u www-data wp db import /tmp/$STAGINGDOMAIN-url.sql --path=$STAGINGPATH --skip-themes --skip-plugins
+#update paths
 sudo -u $WPCLIUSER wp search-replace $EXTRACTEDPATH $STAGINGPATH --path=$STAGINGPATH --skip-themes --skip-plugins
 #turn off indexing of search engines
 sudo -u $WPCLIUSER wp option update blog_public 0 --path=$STAGINGPATH --skip-themes --skip-plugins
