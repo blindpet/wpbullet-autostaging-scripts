@@ -90,7 +90,7 @@ sed -i "/define('DB_PASSWORD', /c\define('DB_PASSWORD', '${NEWDBPASS}');" ${STAG
 
 #permissions fix
 
-chown -R www-data:www-data $STAGINGPATH/
+chown -R $WPCLIUSER:$WPCLIUSER $STAGINGPATH/
 find $STAGINGPATH -type f -exec chmod 644 {} +
 find $STAGINGPATH -type d -exec chmod 755 {} +
 
