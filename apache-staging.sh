@@ -3,6 +3,19 @@
 # Source: https://guides.wp-bullet.com
 # Adapted
 # Author: Mike
+
+# Check if user is root
+if [ $(id -u) != "0" ]; then
+    echo "You must be root or a sudo user to run this script"
+    exit 1
+fi
+
+#check wp-cli present and install
+if [ ! hash wp 2>/dev/null]; then
+    sudo wget -q https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/bin/wp
+    sudo chmod 755 /usr/bin/wp
+fi
+#define mysql root password
 MYSQLROOTPASS=
 #user to run wp cli as
 WPCLIUSER="www-data"
