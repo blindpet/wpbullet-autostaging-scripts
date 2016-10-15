@@ -3,6 +3,13 @@
 # Source: https://guides.wp-bullet.com
 # Adapted
 # Author: Mike
+
+# Check if user is root
+if [ $(id -u) != "0" ]; then
+    echo "You must be root or a sudo user to run this script"
+    exit 1
+fi
+
 MYSQLROOTPASS=
 APACHESITEPATH=/etc/apache2/sites-available
 #where WordPress paths are
@@ -14,12 +21,26 @@ NEWHASH=$(date | sha1sum | awk '{ print substr($0,0,8)}')
 #capture first parameter
 VHOST="$1"
 
+# check MySQL root password is set
+if [ -z "$MYSQLROOTPASS" ]; then
+    echo "MySQL root password not set"
+    exit
+fi
+
+# check if sites-available directory exists
+if [ ! -d "$APACHESITEPATH" ]; then
+    echo "Sites available directory doesn't exist"
+    exit
+fi
+
+# check vhost exists and prompt
 if [ -z "$VHOST" ]; then
     echo "What is the name of your virtual host?"
     echo "Virtual hosts found:\n ${SITELIST[@]} "
     read VHOST
 fi
 
+# check vhost exists
 if [ ! -f $APACHEPATH/$VHOST ]; then
     echo "$VHOST not found"
     exit

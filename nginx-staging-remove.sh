@@ -3,12 +3,31 @@
 # Source: https://guides.wp-bullet.com
 # Adapted
 # Author: Mike
+
+# Check if user is root
+if [ $(id -u) != "0" ]; then
+    echo "You must be root or a sudo user to run this script"
+    exit 1
+fi
+
 MYSQLROOTPASS=
 NGINXSITEPATH=/etc/nginx/sites-available
 NGINXSITESENABLED=/etc/nginx/sites-enabled
 SITEPATH=/var/www
 SITELIST=($(ls -lh $NGINXSITEPATH | awk '{print $9}'))
 #generate hash based on date and use first 8 characters for subdomain
+
+# check MySQL root password is set
+if [ -z "$MYSQLROOTPASS" ]; then
+    echo "MySQL root password not set"
+    exit
+fi
+
+#check if sites-available directory exists
+if [ ! -d "$NGINXSITEPATH" ]; then
+    echo "Sites available directory doesn't exist"
+    exit
+fi
 
 #capture first parameter
 VHOST="$1"
