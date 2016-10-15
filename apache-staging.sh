@@ -37,6 +37,18 @@ NEWHASH=$(date | sha1sum | awk '{ print substr($0,0,8)}')
 # capture first parameter which is the vhost file
 VHOST="$1"
 
+# check MySQL root password is set
+if [ -z "$MYSQLROOTPASS" ]; then
+    echo "MySQL root password not set"
+    exit
+fi
+
+#check if sites-available directory exists
+if [ ! -d "$APACHESITEPATH" ]; then
+    echo "Sites available directory doesn't exist"
+    exit
+fi
+
 # if no parameter passed prompt user for vhost
 if [ -z "$VHOST" ]; then
     echo "What is the name of your virtual host?"
