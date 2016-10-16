@@ -10,10 +10,19 @@ if [ $(id -u) != "0" ]; then
     exit 1
 fi
 
+# define mysql root password
 MYSQLROOTPASS=
+
+# path to nginx virtual hosts
 NGINXSITEPATH=/etc/nginx/sites-available
+
+# path to enabled nginx virtual hosts
 NGINXSITESENABLED=/etc/nginx/sites-enabled
+
+# path to WordPress installations
 SITEPATH=/var/www
+
+# create array of virtual hosts
 SITELIST=($(ls -lh $NGINXSITEPATH | awk '{print $9}'))
 
 # check MySQL root password is set

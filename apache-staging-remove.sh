@@ -10,10 +10,16 @@ if [ $(id -u) != "0" ]; then
     exit 1
 fi
 
+# define mysql root password
 MYSQLROOTPASS=
+
+# define path to Apache virtual hosts
 APACHESITEPATH=/etc/apache2/sites-available
-#where WordPress paths are
+
+# where WordPress sites are
 SITEPATH=/var/www
+
+# generate array of sites to display to user
 SITELIST=($(ls -lh $APACHESITEPATH | awk '{print $9}'))
 
 #capture first parameter
