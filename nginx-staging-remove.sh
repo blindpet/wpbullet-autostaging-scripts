@@ -15,7 +15,6 @@ NGINXSITEPATH=/etc/nginx/sites-available
 NGINXSITESENABLED=/etc/nginx/sites-enabled
 SITEPATH=/var/www
 SITELIST=($(ls -lh $NGINXSITEPATH | awk '{print $9}'))
-#generate hash based on date and use first 8 characters for subdomain
 
 # check MySQL root password is set
 if [ -z "$MYSQLROOTPASS" ]; then

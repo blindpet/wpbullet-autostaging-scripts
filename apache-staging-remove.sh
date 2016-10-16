@@ -15,8 +15,6 @@ APACHESITEPATH=/etc/apache2/sites-available
 #where WordPress paths are
 SITEPATH=/var/www
 SITELIST=($(ls -lh $APACHESITEPATH | awk '{print $9}'))
-#generate hash based on date and use first 8 characters for subdomain
-NEWHASH=$(date | sha1sum | awk '{ print substr($0,0,8)}')
 
 #capture first parameter
 VHOST="$1"
