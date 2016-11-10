@@ -68,7 +68,7 @@ mysql -u root -p${MYSQLROOTPASS} -e "FLUSH PRIVILEGES;"
 
 #remove nginx virtualhost
 
-unlink $SITESENABLED/$VHOST
+unlink $NGINXSITESENABLED/$VHOST
 rm $VHOSTPATH
 rm -rf $EXTRACTEDPATH
 
