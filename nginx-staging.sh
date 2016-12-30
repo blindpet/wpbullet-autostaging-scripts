@@ -131,9 +131,9 @@ mysql -u root -p${MYSQLROOTPASS} -e "GRANT ALL PRIVILEGES ON ${NEWDB}.* TO ${NEW
 mysql -u root -p${MYSQLROOTPASS} -e "FLUSH PRIVILEGES;"
 
 # replace staging db info
-sed -i "/define('DB_NAME', /c\define('DB_NAME', '${NEWDB}');" ${STAGINGPATH}/wp-config.php
-sed -i "/define('DB_USER', /c\define('DB_USER', '${NEWDBUSER}');" ${STAGINGPATH}/wp-config.php
-sed -i "/define('DB_PASSWORD', /c\define('DB_PASSWORD', '${NEWDBPASS}');" ${STAGINGPATH}/wp-config.php
+sed -i "/define(.*'DB_NAME',.*/c\define('DB_NAME', '${NEWDB}');" ${STAGINGPATH}/wp-config.php
+sed -i "/define(.*'DB_USER',.*/c\define('DB_USER', '${NEWDBUSER}');" ${STAGINGPATH}/wp-config.php
+sed -i "/define(.*'DB_PASSWORD',.*/c\define('DB_PASSWORD', '${NEWDBPASS}');" ${STAGINGPATH}/wp-config.php
 
 # permissions fix
 chown -R $WPCLIUSER:$WPCLIUSER $STAGINGPATH
