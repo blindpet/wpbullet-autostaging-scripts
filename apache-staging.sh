@@ -52,7 +52,7 @@ fi
 # if no parameter passed prompt user for vhost
 if [ -z "$VHOST" ]; then
     echo "What is the name of your virtual host?"
-    echo "Virtual hosts found:\n ${SITELIST[@]} "
+    echo -e "Virtual hosts found:\n ${SITELIST[@]} "
     read VHOST
 fi
 
